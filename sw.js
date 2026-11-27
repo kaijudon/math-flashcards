@@ -1,6 +1,6 @@
 // Network first, cache as fallback, so the cards open offline after one visit.
-var CACHE = "mf-v2";
-var FILES = ["./", "index.html", "styles.css", "app.js", "cards.js", "variants.js", "art.js", "log.js", "parent.js", "fonts/nunito.woff2"];
+var CACHE = "mf-v3";
+var FILES = ["./", "index.html", "styles.css", "app.js", "cards.js", "variants.js", "art.js", "log.js", "config.js", "report.js", "fonts/nunito.woff2"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }));
