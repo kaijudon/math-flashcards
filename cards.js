@@ -5,6 +5,9 @@
 // The app renders these as stacked fractions.
 // `answer` is the index of the correct choice.
 // Run `node tests/check-cards.js` after any edit to re-check every answer.
+// Cards with a generator in variants.js show fresh numbers in the app.
+// For those cards, the numbers here are the base set, and
+// tests/check-variants.js checks that the generator gives this card.
 
 window.TOPICS = [
   { id: "T1", title: "Number sentences and MDAS" },
