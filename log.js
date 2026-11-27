@@ -1,7 +1,10 @@
-// Practice log for the parent view, kept in localStorage on this phone only.
+// Practice log, kept in localStorage on this phone.
+// report.js sends each session to the parent's Google Sheet.
 //
 // One session is one run through a deck:
-//   { id, start, deck, total, done, items: [{ card, result, ms, left }] }
+//   { id, start, updated, end, deck, total, done, items: [{ card, result, ms, left }] }
+// `updated` is the time of the last change. `end` is set when the run ends:
+// at the last card (done is true) or when the child quits early (done is false).
 // `result` is "right", "wrong", "timeout", or null (the card was not answered).
 // `left` counts the times the app was left while the card was open.
 // A card gives a point only when result is "right" and left is 0.
@@ -23,16 +26,13 @@
   }
 
   function save(session) {
+    session.updated = Date.now();
     var all = load().filter(function (s) { return s.id !== session.id; });
     all.push(session);
     try { window.localStorage.setItem(KEY, JSON.stringify(all.slice(-MAX_SESSIONS))); } catch (e) { /* storage blocked */ }
   }
 
   function current(session) { return session.items[session.items.length - 1]; }
-
-  function points(session) {
-    return session.items.filter(function (it) { return it.result === "right" && !it.left; }).length;
-  }
 
   window.MFLog = {
     start: function (deck, total) {
@@ -63,9 +63,14 @@
     },
     finish: function (session) {
       session.done = true;
+      session.end = Date.now();
       save(session);
     },
-    sessions: load,
-    points: points
+    // The child left the run before the last card.
+    stop: function (session) {
+      session.end = Date.now();
+      save(session);
+    },
+    sessions: load
   };
 })();

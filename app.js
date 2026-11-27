@@ -6,6 +6,21 @@
   var VARIANTS = window.VARIANTS;
   var ART = window.ART;
   var LOG = window.MFLog;
+  var CONFIG = window.MF_CONFIG || {};
+  var REPORT = window.MFReport.create({
+    // Lazy: reading window.localStorage throws when the browser blocks storage.
+    storage: {
+      getItem: function (k) { return window.localStorage.getItem(k); },
+      setItem: function (k, v) { window.localStorage.setItem(k, v); }
+    },
+    fetch: window.fetch ? window.fetch.bind(window) : function () { return Promise.reject(new Error("no fetch")); },
+    url: CONFIG.REPORT_URL,
+    token: CONFIG.REPORT_TOKEN,
+    device: window.MFReport.deviceLabel(navigator.userAgent),
+    setTimeout: window.setTimeout.bind(window),
+    clearTimeout: window.clearTimeout.bind(window),
+    AbortController: window.AbortController
+  });
   var STORE_KEY = "mf-best-v1";
   var ALL = "ALL";
 
@@ -16,7 +31,7 @@
   var LOW_TIME = 10;
 
   var $ = function (id) { return document.getElementById(id); };
-  var screens = { home: $("home"), quiz: $("quiz"), results: $("results"), parent: $("parent") };
+  var screens = { home: $("home"), quiz: $("quiz"), results: $("results") };
 
   // { deck, mix, cards, index, score, perTopic, session, card, phase, shownAt, deadline, left, tid }
   // phase is "question" while the card waits for an answer, then "feedback".
@@ -287,6 +302,7 @@
     stopTimer();
     LOG.finish(state.session);
     state.phase = "done";
+    send(state.session);
     var total = state.cards.length;
     var pct = state.score / total;
     var isNew = saveBest(state.deck, state.score, total);
@@ -313,16 +329,26 @@
     if (pct >= 0.75) ART.celebrate();
   }
 
-  // Stop the timer of a run that the child leaves before the end.
+  // Stop a run that the child leaves before the end, and send it as not complete.
   function closeSession() {
     stopTimer();
-    if (state) state.phase = "done";
+    if (!state || state.phase === "done") return;
+    state.phase = "done";
+    LOG.stop(state.session);
+    send(state.session);
   }
 
-  function openParent() {
-    closeSession();
-    show("parent");
-    window.MFParent.render($("parent-body"), renderHome);
+  // ---------- report to the parent's sheet ----------
+  function send(session) {
+    REPORT.enqueue(session);
+    REPORT.flush();
+  }
+  // The id of the run that is open now. sync() does not send that one yet.
+  function openSessionId() {
+    return state && state.phase !== "done" ? state.session.id : null;
+  }
+  function sync() {
+    REPORT.sync(LOG.sessions(), openSessionId());
   }
 
   $("home-owl").innerHTML = ART.owl("happy");
@@ -332,9 +358,10 @@
   $("quit").addEventListener("click", renderHome);
   $("restart").addEventListener("click", function () { start(state.deck); });
   $("home-btn").addEventListener("click", renderHome);
-  $("parent-btn").addEventListener("click", openParent);
 
   renderHome();
+  sync();
+  window.addEventListener("online", sync);
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     navigator.serviceWorker.register("sw.js").catch(function () { /* offline mode is optional */ });
