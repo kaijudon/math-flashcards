@@ -3,17 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1f5fa8">
+  <meta name="theme-color" content="#fff4e6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1d1830" media="(prefers-color-scheme: dark)">
   <meta name="description" content="Grade 4 Math flashcards for the DepEd Term 2 exam.">
   <title>Grade 4 Math Flashcards</title>
+  <link rel="preload" href="fonts/nunito.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main id="app" aria-live="polite">
     <section id="home" class="screen">
       <header class="hero">
-        <h1>Grade 4 Math</h1>
-        <p class="sub">Term 2 flashcards</p>
+        <div id="home-owl" class="hero-owl"></div>
+        <div class="hero-text">
+          <h1>Grade 4 Math</h1>
+          <p class="sub">Term 2 flashcards</p>
+          <p class="bubble">Hi, I'm Pip! Pick a topic and let's practice.</p>
+        </div>
       </header>
 
       <label class="toggle">
@@ -23,16 +29,24 @@
 
       <h2 class="section-title">Pick a topic</h2>
       <ul id="topic-list" class="topic-list"></ul>
+
+      <p class="home-foot"><button type="button" class="link-btn small" id="parent-btn">Parent view</button></p>
     </section>
 
     <section id="quiz" class="screen" hidden>
       <div class="bar">
         <button type="button" class="link-btn" id="quit">&larr; Topics</button>
+        <span id="timer" class="timer-pill" role="timer" aria-live="off"><span id="timer-art"></span><span id="timer-text">1:00</span></span>
         <span id="score" class="score-pill">Score 0</span>
       </div>
       <div class="progress" aria-hidden="true"><div id="progress-fill"></div></div>
       <p id="counter" class="counter"></p>
       <p id="topic-tag" class="topic-tag"></p>
+
+      <div id="left-note" class="note" role="status" hidden>
+        <div id="left-owl" class="note-owl"></div>
+        <p>Welcome back! You left the app during this card, so this card gives no point. You can still answer it to practice.</p>
+      </div>
 
       <div class="card">
         <p id="question" class="question"></p>
@@ -50,7 +64,8 @@
     </section>
 
     <section id="results" class="screen" hidden>
-      <header class="hero">
+      <header class="hero hero-results">
+        <div id="results-owl" class="hero-owl"></div>
         <h1 id="result-title">Done!</h1>
         <p id="result-score" class="big-score"></p>
         <p id="result-best" class="sub"></p>
@@ -59,9 +74,17 @@
       <button type="button" class="primary" id="restart">Try again</button>
       <button type="button" class="secondary" id="home-btn">Pick another topic</button>
     </section>
+
+    <section id="parent" class="screen" hidden>
+      <div id="parent-body"></div>
+    </section>
   </main>
 
   <script src="cards.js"></script>
+  <script src="variants.js"></script>
+  <script src="art.js"></script>
+  <script src="log.js"></script>
+  <script src="parent.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
