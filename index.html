@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1f5fa8">
+  <meta name="description" content="Grade 4 Math flashcards for the DepEd Term 2 exam.">
+  <title>Grade 4 Math Flashcards</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app" aria-live="polite">
+    <section id="home" class="screen">
+      <header class="hero">
+        <h1>Grade 4 Math</h1>
+        <p class="sub">Term 2 flashcards</p>
+      </header>
+
+      <label class="toggle">
+        <input type="checkbox" id="shuffle" checked>
+        <span>Shuffle cards</span>
+      </label>
+
+      <h2 class="section-title">Pick a topic</h2>
+      <ul id="topic-list" class="topic-list"></ul>
+    </section>
+
+    <section id="quiz" class="screen" hidden>
+      <div class="bar">
+        <button type="button" class="link-btn" id="quit">&larr; Topics</button>
+        <span id="score" class="score-pill">Score 0</span>
+      </div>
+      <div class="progress" aria-hidden="true"><div id="progress-fill"></div></div>
+      <p id="counter" class="counter"></p>
+      <p id="topic-tag" class="topic-tag"></p>
+
+      <div class="card">
+        <p id="question" class="question"></p>
+      </div>
+
+      <div id="choices" class="choices" role="group" aria-label="Choices"></div>
+
+      <div id="feedback" class="feedback" hidden>
+        <p id="verdict" class="verdict"></p>
+        <p class="answer-line"><strong>Answer:</strong> <span id="answer"></span></p>
+        <p id="explain" class="explain"></p>
+        <p class="mistake"><strong>Watch out:</strong> <span id="mistake"></span></p>
+        <button type="button" class="primary" id="next">Next card</button>
+      </div>
+    </section>
+
+    <section id="results" class="screen" hidden>
+      <header class="hero">
+        <h1 id="result-title">Done!</h1>
+        <p id="result-score" class="big-score"></p>
+        <p id="result-best" class="sub"></p>
+      </header>
+      <ul id="result-topics" class="result-topics"></ul>
+      <button type="button" class="primary" id="restart">Try again</button>
+      <button type="button" class="secondary" id="home-btn">Pick another topic</button>
+    </section>
+  </main>
+
+  <script src="cards.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
